@@ -1,0 +1,12 @@
+# Exclude locally installed dependencies
+node_modules/
+
+# Exclude git history and configuration.
+.git/
+.gitignore
+
+#Exclude docker-compose.yml for Development
+docker-compose.yml
+
+# Exclude keyfile.json
+keyfile.json

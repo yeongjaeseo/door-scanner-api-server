@@ -1,0 +1,20 @@
+# Exclude locally installed dependencies
+node_modules/
+npm-debug.log
+dist/
+
+# Exclude local IDE settings
+.idea/
+.vscode/
+
+# Exclude .env
+.env
+
+# macOS
+**/.DS_Store
+
+#Exclude docker-compose.yml for Development
+docker-compose.yml
+
+# Exclude keyfile.json
+keyfile.json
