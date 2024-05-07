@@ -32,7 +32,7 @@ const getUserByUid = async (req: Request, res: Response): Promise<void> => {
   }
   try {
     const user = await userDao.getUserByUid(uid);
-    if (!user) {
+    if (user.length === 0) {
       res.status(404).json({ success: false, message: 'User not found' });
       return;
     }
@@ -46,9 +46,11 @@ const createUser = async (req: Request, res: Response): Promise<void> => {
   // Extract data from request body
   const { user_nm, user_lgn_type_cd, eml_addr, user_uid } = req.body;
 
+  console.log(req.body);
+
   // Validate the incoming request
   if (!user_nm || user_lgn_type_cd === undefined || !eml_addr || !user_uid) {
-    res.status(400).json({ success: false, message: 'Missing required user fields. user fields are user_nm, user_lgn_type_cd, eml_addr, user_uid' });
+    res.status(400).json({ success: false, message: 'Missing required user fields. user fields(user_nm, user_lgn_type_cd, eml_addr, user_uid) are required' });
     return;
   }
 

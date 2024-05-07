@@ -1,6 +1,6 @@
-# Cloud Run API Server with Typescript, Express, PostgreSQL(Cloud SQL)
+# Door-Scanner API Server
 
-An Cloud Run API Server Boilerplate, written in Node.js(20lts). 
+A Door-Scanner API Server, written in Node.js(20lts). 
 
 [![Run on Google Cloud](https://deploy.cloud.run/button.svg)](https://deploy.cloud.run)
 
