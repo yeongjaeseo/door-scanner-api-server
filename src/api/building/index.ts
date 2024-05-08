@@ -10,7 +10,7 @@ router.get('/', ctrl.listBuildings);
 router.get('/map', ctrl.getBuildingsByRadius);
 
 // Retrieve a single building by ID
-router.get('/:bldg_id', ctrl.getBuildingById);
+router.get('/:bldg_id', ctrl.getBuildingByBldgid);
 
 
 

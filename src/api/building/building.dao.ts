@@ -7,33 +7,38 @@ import { IBldg } from './building.model';
  * @param name - Optional. The name of the user to filter by.
  * @returns A Promise that resolves to an array of IBldg.
  */
-const listBuildings = async (name?: string): Promise<IBldg[]> => {
+const listBuildings = async (bldg_nm?: string): Promise<IBldg[]> => {
   let query = `
-                SELECT user_id,
-                       user_group_id,
-                       user_nm,
-                       user_lgn_type_cd,
-                       eml_addr,
-                       user_uid,
-                       user_group_nm,
-                       user_type_cd
-                FROM   kor3.USER
-                JOIN   kor3.user_group USING (user_group_id)
+                SELECT bldg_id,
+                       bldg_sn,
+                       rds_sn,
+                       sig_cd,
+                       emd_cd,
+                       lotno_addr,
+                       road_nm_addr,
+                       bldg_nm,
+                       ST_asText(bldg_geom) as wkt,
+                       gro_flo_co,
+                       und_flo_co,
+                       bdtyp_cd,
+                       crt_dt,
+                       mdfcn_dt
+                FROM   kor3.BLDG
               `;
 
   const values: string[] = [];
-
-  if (name) {
-    query += ` WHERE user_nm ILIKE $1`;  // Safe use of parameters
-    values.push(`%${name}%`);            // Parameters are passed as an array
+  if (bldg_nm) {
+    query += ` WHERE bldg_nm ILIKE $1`;  // Safe use of parameters
+    values.push(`%${bldg_nm}%`);            // Parameters are passed as an array
   }
 
   try {
+    console.log(bldg_nm);
     const result: QueryResult = await db.query(query, values);  // Using parameters safely
     return result.rows as IBldg[];
   } catch (error) {
     console.error(`Error DAO getUsers:`, error);
-    throw new Error(`Database operation getUsers failed ${name ? 'for user name: ' + name : ''}`);
+    throw new Error(`Database operation getUsers failed ${bldg_nm ? 'for bldg_nm: ' + bldg_nm : ''}`);
   }
 };
 
@@ -42,7 +47,7 @@ const listBuildings = async (name?: string): Promise<IBldg[]> => {
  * @param bldg_id - The bldg_id of the bulding to retrieve building.
  * @returns A Promise that resolves to an array of IBldg.
  */
-const getBuildingById = async (bldg_id: number): Promise<IBldg[]> => {
+const getBuildingByBldgid = async (bldg_id: number): Promise<IBldg[]> => {
   const query = `
                 SELECT bldg_id,
                        bldg_sn,
@@ -52,12 +57,12 @@ const getBuildingById = async (bldg_id: number): Promise<IBldg[]> => {
                        lotno_addr,
                        road_nm_addr,
                        bldg_nm,
-                       ST_asText(bldg_geom),
+                       ST_asText(bldg_geom) as wkt,
                        gro_flo_co,
                        und_flo_co,
                        bdtyp_cd,
-                       crt,dt
-                       mdfcn,dt
+                       crt_dt,
+                       mdfcn_dt
                 FROM   kor3.BLDG
                 WHERE  bldg_id = $1 
                 `;
@@ -75,7 +80,7 @@ const getBuildingById = async (bldg_id: number): Promise<IBldg[]> => {
  * @param radius - The bldg_id of the POI to retrieve details.
  * @returns A Promise that resolves to an array of IBldg.
  */
-const getBuildingsByRadius = async (x: number, y: number, radius: number): Promise<IBldg[]> => {
+const getBuildingsByRadius = async (x: number, y: number, radius: number, limit: number): Promise<IBldg[]> => {
   const query = `
                 SELECT bldg_id,
                        bldg_sn,
@@ -85,7 +90,8 @@ const getBuildingsByRadius = async (x: number, y: number, radius: number): Promi
                        lotno_addr,
                        road_nm_addr,
                        bldg_nm,
-                       ST_asText(bldg_geom),
+                       ST_X(bldg_geom) AS x,
+                       ST_Y(bldg_geom) AS y,
                        gro_flo_co,
                        und_flo_co,
                        bdtyp_cd,
@@ -97,8 +103,9 @@ const getBuildingsByRadius = async (x: number, y: number, radius: number): Promi
                         ST_SetSRID(ST_MakePoint($1, $2), 4326),
                         $3
                         )
+                LIMIT $4
                 `;
-  const values = [x, y, radius];
+  const values = [x, y, radius, limit];
 
   try {
     const result: QueryResult = await db.query(query, values);
@@ -111,6 +118,6 @@ const getBuildingsByRadius = async (x: number, y: number, radius: number): Promi
 
 export default {
   listBuildings,
-  getBuildingById,
+  getBuildingByBldgid,
   getBuildingsByRadius,
 };
