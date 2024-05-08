@@ -30,10 +30,10 @@ const getUserGroupByGroupCode = async (req: Request, res: Response): Promise<voi
 };
 
 const createUserGroup = async (req: Request, res: Response): Promise<void> => {
-  const { user_group_nm, user_type_cd, user_group_cd }: IUserGroupPayload = req.body;
+  const { up_user_group_id, user_group_nm, user_type_cd, user_group_cd }: IUserGroupPayload = req.body;
 
-  if (!user_group_nm || !user_type_cd || !user_group_cd) {
-    res.status(400).json({ success: false, message: 'All user group fields are required: user_group_nm, user_type_cd, user_group_cd' });
+  if (!up_user_group_id || !user_group_nm || !user_type_cd || !user_group_cd) {
+    res.status(400).json({ success: false, message: 'All user group fields are required: up_user_group_id, user_group_nm, user_type_cd, user_group_cd' });
     return;
   }
 

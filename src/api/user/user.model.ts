@@ -33,7 +33,6 @@ export interface IUserUpdates {
   user_lgn_type_cd?: LoginType;
   eml_addr?: string;
   user_group_id?: number;
-  user_type_cd?: number;
   [key: string]: string | number | undefined;  // Adding an index signature
 }
 

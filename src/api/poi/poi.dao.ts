@@ -54,7 +54,7 @@ const getPOIByBldgid = async (bldg_id: number): Promise<IPOI[]> => {
                        origin_id,
                        orgin_cd,
                        poi_geom,
-                       crt,dt
+                       crt,dt,
                        mdfcn,dt
                 FROM   kor3.POI
                 WHERE  bldg_id = $1 
@@ -77,7 +77,7 @@ const getPOIDtlByPOIid = async (poi_id: number): Promise<IPOI[]> => {
   const query = `
                 SELECT poi_dtl_id,
                        poi_id,
-                       intg_clct_id,
+                       user_id,
                        acsbl_cd,
                        entrc_geom,
                        entrc_data,

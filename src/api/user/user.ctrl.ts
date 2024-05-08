@@ -9,18 +9,17 @@ import { IUser, IUserUpdates, LoginType } from './user.model';
  */
 const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
-      const name = typeof req.query.name === 'string' ? req.query.name : undefined;
-      console.log(req);
-      const users = await userDao.getUsers(name);
+    const name = typeof req.query.name === 'string' ? req.query.name : undefined;
+    const users = await userDao.getUsers(name);
 
-      if (users.length === 0) {
-          res.status(404).json({ success: false, message: 'No users found' });
-          return;
-      }
+    if (users.length === 0) {
+      res.status(404).json({ success: false, message: 'No users found' });
+      return;
+    }
 
-      res.json({ success: true, message: 'Users retrieved successfully', data: users });
+    res.json({ success: true, message: 'Users retrieved successfully', data: users });
   } catch (error) {
-      res.status(500).json({ success: false, message: 'Error retrieving users' });
+    res.status(500).json({ success: false, message: 'Error retrieving users' });
   }
 };
 
@@ -46,8 +45,6 @@ const createUser = async (req: Request, res: Response): Promise<void> => {
   // Extract data from request body
   const { user_nm, user_lgn_type_cd, eml_addr, user_uid } = req.body;
 
-  console.log(req.body);
-
   // Validate the incoming request
   if (!user_nm || user_lgn_type_cd === undefined || !eml_addr || !user_uid) {
     res.status(400).json({ success: false, message: 'Missing required user fields. user fields(user_nm, user_lgn_type_cd, eml_addr, user_uid) are required' });
@@ -72,7 +69,6 @@ const createUser = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-
 const updateUserByUid = async (req: Request, res: Response): Promise<void> => {
   const uid = req.params.user_uid;
   if (!uid) {
@@ -83,7 +79,7 @@ const updateUserByUid = async (req: Request, res: Response): Promise<void> => {
   const updates: IUserUpdates = req.body;
   try {
     const isUpdated = await userDao.updateUserByUid(uid, updates);
-    if (!isUpdated) {
+    if (isUpdated.length === 0) {
       res.status(404).json({ success: false, message: 'User not found or no update applied' });
       return;
     }

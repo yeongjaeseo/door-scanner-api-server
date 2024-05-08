@@ -6,6 +6,7 @@
  */
 export interface IUserGroup {
   user_group_id: number;
+  up_user_group_id: number;
   user_group_nm: string;
   user_type_cd: number;
   user_group_cd: string;
@@ -19,6 +20,7 @@ export interface IUserGroup {
  */
 export interface IUserGroupPayload {
   user_group_id: number;
+  up_user_group_id: number;
   user_group_nm: string;
   user_type_cd: number;
   user_group_cd: string;
@@ -29,6 +31,7 @@ export interface IUserGroupPayload {
  */
 export interface IUserGroupWithEnums {
   user_group_id: number;
+  up_user_group_id: number;
   user_group_nm: string;
   user_type_cd: number;
   user_group_cd: string;

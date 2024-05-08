@@ -4,7 +4,7 @@
 /**
  * Represents a complete POI record as it appears in the kor3.POI table
  */
-export interface IPOI {
+export interface IBldg {
   poi_id: number;
   bldg_id: number;
   poi_nm: string;
@@ -16,21 +16,4 @@ export interface IPOI {
   origin_cd: string;
   x: number;
   y: number;
-}
-
-/**
- * Represents a complete POI record as it appears in the kor3.POI_DTL table
- */
-export interface IPOIDtl {
-  poi_dt_id: number;
-  poi_id: number;
-  intg_clct_id: number;
-  acsbl_cd: number;
-  entrc_data: JSON;
-  fclt_data: JSON;
-  out_yn: boolean;
-  vps_acc: JSON;
-  x: number;
-  y: number;
-  user_id: number;
 }

@@ -95,11 +95,11 @@ const createUser = async (user: IUser): Promise<IUser> => {
                 `;
 
   const values = [
-                  user.user_nm,
-                  user.user_lgn_type_cd,
-                  user.eml_addr,
-                  user.user_uid
-                ];
+    user.user_nm,
+    user.user_lgn_type_cd,
+    user.eml_addr,
+    user.user_uid
+  ];
   try {
     const result: QueryResult = await db.query(query, values);
     return result.rows[0] as IUser; // Assuming the insert returns at least one row

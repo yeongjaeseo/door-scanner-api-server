@@ -36,7 +36,7 @@ const getUserGroupByGroupCode = async (user_group_cd: string): Promise<IUserGrou
                        user_type_cd,
                        user_group_cd
                 FROM   kor3.user_group
-                WHERE  user_group_cd = $1 
+                WHERE  user_group_cd ilike $1 
                 `;
   try {
     const result: QueryResult = await db.query(query, [user_group_cd]);
@@ -57,6 +57,7 @@ const createUserGroup = async (user_group: IUserGroup): Promise<IUserGroup> => {
   const query = `
   INSERT INTO kor3.USER_GROUP
               (
+                up_user_group_id,
                 user_group_nm,
                 user_type_cd,
                 user_group_cd
@@ -65,12 +66,14 @@ const createUserGroup = async (user_group: IUserGroup): Promise<IUserGroup> => {
               (
                           $1,
                           $2,
-                          $3
+                          $3,
+                          $4
               )
               returning *
   `;
 
   const values = [
+    user_group.up_user_group_id,
     user_group.user_group_nm,
     user_group.user_type_cd,
     user_group.user_group_cd
