@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 
-// Function to parse the TEST_API_KEYS environment variable
+// Function to parse the DOOR_SCANNER_API_KEYS environment variable
 const getValidApiKeys = (): string[] => {
     try {
         // Assuming TEST_API_KEYS is always a valid JSON string
-        const testApiKeysJson = process.env.TEST_API_KEYS || '{"keys": []}';
-        const testApiKeysObj = JSON.parse(testApiKeysJson);
+        const apiKeysJson = process.env.DOOR_SCANNER_API_KEYS || '{"keys": []}';
+        const apiKeysObj = JSON.parse(apiKeysJson);
 
         // Extracting values from each object in the 'keys' array, regardless of key name
-        const apiKeys: string[] = testApiKeysObj.keys.reduce((acc: string[], keyObj: { [key: string]: string }) => {
+        const apiKeys: string[] = apiKeysObj.keys.reduce((acc: string[], keyObj: { [key: string]: string }) => {
             // Extracting all values from the keyObj and adding them to the accumulator
             Object.values(keyObj).forEach(value => acc.push(value));
             return acc;
