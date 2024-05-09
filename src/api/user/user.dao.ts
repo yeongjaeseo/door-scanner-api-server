@@ -3,33 +3,20 @@ import { QueryResult } from 'pg';
 import { IUser, IUserUpdates } from './user.model';
 
 /**
- * Retrieves users from the database, optionally filtered by name.
- * @param name - Optional. The name of the user to filter by.
+ * Retrieves users from the database, optionally filtered by their name.
+ * @param name - Optional name to filter users by.
  * @returns A Promise that resolves to an array of IUser.
  */
 const getUsers = async (name?: string): Promise<IUser[]> => {
-  let query = `
-                SELECT user_id,
-                       user_group_id,
-                       user_nm,
-                       user_lgn_type_cd,
-                       eml_addr,
-                       user_uid,
-                       user_group_nm,
-                       user_type_cd
-                FROM   kor3.USER
-                JOIN   kor3.user_group USING (user_group_id)
-              `;
-
+  let query = `SELECT user_id, user_group_id, user_nm, user_lgn_type_cd, eml_addr, user_uid, user_group_nm, user_type_cd FROM kor3.USER JOIN kor3.user_group USING (user_group_id)`;
   const values: string[] = [];
-
   if (name) {
-    query += ` WHERE user_nm ILIKE $1`;  // Safe use of parameters
-    values.push(`%${name}%`);            // Parameters are passed as an array
+    query += ` WHERE user_nm ILIKE $1`;
+    values.push(`%${name}%`);
   }
 
   try {
-    const result: QueryResult = await db.query(query, values);  // Using parameters safely
+    const result: QueryResult = await db.query(query, values);
     return result.rows as IUser[];
   } catch (error) {
     console.error(`Error DAO getUsers:`, error);
@@ -37,28 +24,13 @@ const getUsers = async (name?: string): Promise<IUser[]> => {
   }
 };
 
-
 /**
- * Retrieves a single user by UID.
+ * Retrieves a single user by their UID.
  * @param uid - The UID of the user to retrieve.
  * @returns A Promise that resolves to an array of IUser.
  */
 const getUserByUid = async (uid: string): Promise<IUser[]> => {
-  const query = `
-                SELECT user_id,
-                       user_group_id,
-                       user_nm,
-                       user_lgn_type_cd,
-                       eml_addr,
-                       user_uid,
-                       user_group_nm,
-                       user_type_cd,
-                       A.crt_dt,
-                       A.mdfcn_dt
-                FROM   kor3.USER A
-                JOIN   kor3.user_group B using (user_group_id)
-                WHERE  user_uid = $1 
-                `;
+  const query = `SELECT user_id, user_group_id, user_nm, user_lgn_type_cd, eml_addr, user_uid, user_group_nm, user_type_cd, A.crt_dt, A.mdfcn_dt FROM kor3.USER A JOIN kor3.user_group B using (user_group_id) WHERE user_uid = $1`;
   try {
     const result: QueryResult = await db.query(query, [uid]);
     return result.rows as IUser[];
@@ -74,32 +46,8 @@ const getUserByUid = async (uid: string): Promise<IUser[]> => {
  * @returns A Promise that resolves to the newly created IUser.
  */
 const createUser = async (user: IUser): Promise<IUser> => {
-  const query = `
-                INSERT INTO kor3.USER
-                            (
-                                        user_group_id,
-                                        user_nm,
-                                        user_lgn_type_cd,
-                                        eml_addr,
-                                        user_uid
-                            )
-                            VALUES
-                            (
-                                        1,
-                                        $1,
-                                        $2,
-                                        $3,
-                                        $4
-                            )
-                            returning *
-                `;
-
-  const values = [
-    user.user_nm,
-    user.user_lgn_type_cd,
-    user.eml_addr,
-    user.user_uid
-  ];
+  const query = `INSERT INTO kor3.USER (user_group_id, user_nm, user_lgn_type_cd, eml_addr, user_uid) VALUES (1, $1, $2, $3, $4) returning *`;
+  const values = [user.user_nm, user.user_lgn_type_cd, user.eml_addr, user.user_uid];
   try {
     const result: QueryResult = await db.query(query, values);
     return result.rows[0] as IUser; // Assuming the insert returns at least one row
@@ -110,7 +58,7 @@ const createUser = async (user: IUser): Promise<IUser> => {
 };
 
 /**
- * Updates a user in the database by UID.
+ * Updates a user in the database by their UID.
  * @param uid - The UID of the user to update.
  * @param updates - An object with fields to update.
  * @returns A Promise that resolves to an array of updated IUser objects.
@@ -125,14 +73,7 @@ const updateUserByUid = async (uid: string, updates: IUserUpdates): Promise<IUse
     throw new Error('No valid updates provided.');
   }
 
-  const query = `
-                UPDATE kor3.USER
-                SET    ${setString},
-                       mdfcn_dt = NOW()
-                WHERE  user_uid = $1
-                returning *
-                `;
-
+  const query = `UPDATE kor3.USER SET ${setString}, mdfcn_dt = NOW() WHERE user_uid = $1 returning *`;
   const values = [uid, ...Object.values(updates).filter(value => value !== undefined)];
   try {
     const result: QueryResult = await db.query(query, values);
@@ -147,5 +88,5 @@ export default {
   getUsers,
   getUserByUid,
   createUser,
-  updateUserByUid,
+  updateUserByUid
 };

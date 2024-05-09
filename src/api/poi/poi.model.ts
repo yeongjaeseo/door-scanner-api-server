@@ -1,8 +1,5 @@
-// Define interfaces that represent database records and update structures
-
-
 /**
- * Represents a complete POI record as it appears in the kor3.POI table
+ * Interface defining the structure of a POI object.
  */
 export interface IPOI {
   poi_id: number;
@@ -19,10 +16,10 @@ export interface IPOI {
 }
 
 /**
- * Represents a complete POI record as it appears in the kor3.POI_DTL table
- */
+* Interface defining the structure of a POI Detail object.
+*/
 export interface IPOIDtl {
-  poi_dt_id: number;
+  poi_dtl_id: number;
   poi_id: number;
   intg_clct_id: number;
   acsbl_cd: number;

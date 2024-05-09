@@ -1,28 +1,30 @@
+import { Request, Response } from 'express';
 import userDao from './user.dao';
-import { Request, Response } from "express";
 import { IUser, IUserUpdates, LoginType } from './user.model';
 
 /**
- * Get all users or users by name if a name query parameter is provided.
- * @param req - The HTTP request object.
- * @param res - The HTTP response object.
+ * Retrieves a list of users or a specific user by name.
+ * @param req - Express HTTP Request object.
+ * @param res - Express HTTP Response object.
  */
 const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
     const name = typeof req.query.name === 'string' ? req.query.name : undefined;
     const users = await userDao.getUsers(name);
 
-    if (users.length === 0) {
-      res.status(404).json({ success: false, message: 'No users found' });
-      return;
-    }
-
-    res.json({ success: true, message: 'Users retrieved successfully', data: users });
+    users.length === 0
+      ? res.status(404).json({ success: false, message: 'No users found' })
+      : res.json({ success: true, message: 'Users retrieved successfully', data: users });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error retrieving users' });
   }
 };
 
+/**
+ * Retrieves a user by their unique UID.
+ * @param req - Express HTTP Request object.
+ * @param res - Express HTTP Response object.
+ */
 const getUserByUid = async (req: Request, res: Response): Promise<void> => {
   const uid = req.params.user_uid;
   if (!uid) {
@@ -31,44 +33,44 @@ const getUserByUid = async (req: Request, res: Response): Promise<void> => {
   }
   try {
     const user = await userDao.getUserByUid(uid);
-    if (user.length === 0) {
-      res.status(404).json({ success: false, message: 'User not found' });
-      return;
-    }
-    res.json({ success: true, message: 'User fetched successfully', data: user });
+    user.length === 0
+      ? res.status(404).json({ success: false, message: 'User not found' })
+      : res.json({ success: true, message: 'User fetched successfully', data: user });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error ctrl getUserbyUID' });
+    res.status(500).json({ success: false, message: 'Error retrieving user' });
   }
 };
 
+/**
+ * Creates a new user with the provided data.
+ * @param req - Express HTTP Request object.
+ * @param res - Express HTTP Response object.
+ */
 const createUser = async (req: Request, res: Response): Promise<void> => {
-  // Extract data from request body
   const { user_nm, user_lgn_type_cd, eml_addr, user_uid } = req.body;
-
-  // Validate the incoming request
   if (!user_nm || user_lgn_type_cd === undefined || !eml_addr || !user_uid) {
-    res.status(400).json({ success: false, message: 'Missing required user fields. user fields(user_nm, user_lgn_type_cd, eml_addr, user_uid) are required' });
+    res.status(400).json({ success: false, message: 'Missing required user fields.' });
     return;
   }
 
-  // Check for the correct type of user_lgn_type_cd, assuming it should be a valid enum number
   if (![LoginType.APPLE, LoginType.GOOGLE, LoginType.KAKAO].includes(user_lgn_type_cd)) {
-    res.status(400).json({ success: false, message: 'Invalid user_lgn_type_cd. APPLE=1, GOOGLE=2, KAKAO=3' });
+    res.status(400).json({ success: false, message: 'Invalid login type. Valid types are APPLE=1, GOOGLE=2, KAKAO=3' });
     return;
   }
 
   try {
-    const newUser: IUser = await userDao.createUser(req.body);
+    const newUser = await userDao.createUser(req.body);
     res.status(201).json({ success: true, message: 'User created successfully', data: newUser });
   } catch (error) {
-    if (error instanceof Error) {
-      // Specific error handling or logging
-      console.error('Error creating user:', error.message);
-      res.status(500).json({ success: false, message: `Error creating user: ${error.message}` });
-    }
+    res.status(500).json({ success: false, message: `Error ctrl createUser}` });
   }
 };
 
+/**
+ * Updates a user's information by their UID.
+ * @param req - Express HTTP Request object.
+ * @param res - Express HTTP Response object.
+ */
 const updateUserByUid = async (req: Request, res: Response): Promise<void> => {
   const uid = req.params.user_uid;
   if (!uid) {
@@ -76,16 +78,14 @@ const updateUserByUid = async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const updates: IUserUpdates = req.body;
+  const updates = req.body as IUserUpdates;
   try {
-    const isUpdated = await userDao.updateUserByUid(uid, updates);
-    if (isUpdated.length === 0) {
-      res.status(404).json({ success: false, message: 'User not found or no update applied' });
-      return;
-    }
-    res.json({ success: true, message: 'User updated successfully', data: isUpdated });
+    const updatedUser = await userDao.updateUserByUid(uid, updates);
+    updatedUser.length === 0
+      ? res.status(404).json({ success: false, message: 'User not found or no updates applied' })
+      : res.json({ success: true, message: 'User updated successfully', data: updatedUser });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error ctrl updateUserbyUid' });
+    res.status(500).json({ success: false, message: `Error ctrl updateUserbyUid` });
   }
 };
 
@@ -93,5 +93,5 @@ export default {
   getUsers,
   getUserByUid,
   createUser,
-  updateUserByUid,
+  updateUserByUid
 };

@@ -1,19 +1,20 @@
-// Define interfaces that represent database records and update structures
-
-
 /**
- * Represents a complete POI record as it appears in the kor3.POI table
+ * Represents a building as it appears in the database schema.
+ * This interface is used to ensure type safety and to define the structure of building data throughout the application.
  */
 export interface IBldg {
-  poi_id: number;
   bldg_id: number;
-  poi_nm: string;
+  bldg_sn: string;
+  rds_sn: string;
+  sig_cd: string;
+  emd_cd: string;
   lotno_addr: string;
   road_nm_addr: string;
-  ctgry_nm: string;
-  phone: string;
-  origin_id: number;
-  origin_cd: string;
-  x: number;
-  y: number;
+  bldg_nm: string;
+  wkt: string; // Well-Known Text representation of the building geometry
+  gro_flo_co: number;
+  und_flo_co: number;
+  bdtyp_cd: string;
+  crt_dt: Date;
+  mdfcn_dt: Date;
 }

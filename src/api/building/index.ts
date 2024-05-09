@@ -3,15 +3,12 @@ import ctrl from './building.ctrl';
 
 const router = express.Router();
 
-// Retrieve all buildings
+/**
+ * Routes definitions for building operations.
+ * Sets up endpoints for retrieving buildings in various ways: all buildings, by ID, and by proximity.
+ */
 router.get('/', ctrl.listBuildings);
-
-// Retrieve buildings within a radius (consider including parameters like center coordinates and radius)
 router.get('/map', ctrl.getBuildingsByRadius);
-
-// Retrieve a single building by ID
 router.get('/:bldg_id', ctrl.getBuildingByBldgid);
-
-
 
 export default router;
