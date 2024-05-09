@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 const getValidApiKeys = (): string[] => {
     try {
         // Assuming TEST_API_KEYS is always a valid JSON string
-        const apiKeysJson = process.env.DOOR_SCANNER_API_KEYS || '{"keys": []}';
+        const apiKeysJson = process.env.DOORSCANNER_API_KEYS || '{"keys": []}';
         const apiKeysObj = JSON.parse(apiKeysJson);
 
         // Extracting values from each object in the 'keys' array, regardless of key name
